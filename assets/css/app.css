@@ -24,6 +24,7 @@ body {
     -webkit-font-smoothing: antialiased;
     font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-y: scroll;
 }
 
 /* links */
@@ -32,11 +33,11 @@ a {
     border: none;
 }
 
-a:focus {
+a:focus, a:focus {
     outline: 0;
     color: red;
     text-decoration: none;
-    border: 1px dotted #aaa;
+    /*border: 1px dotted #aaa;*/
 }
 
 a:hover {
