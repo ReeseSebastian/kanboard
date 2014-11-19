@@ -38,12 +38,11 @@ class Category extends Base
     {
         $project = $this->getProjectManagement();
 
-        $this->response->html($this->projectLayout('category_index', array(
+        $this->response->html($this->projectLayout('category/index', array(
             'categories' => $this->category->getList($project['id'], false),
             'values' => array('project_id' => $project['id']),
             'errors' => array(),
             'project' => $project,
-            'menu' => 'projects',
             'title' => t('Categories')
         )));
     }
@@ -71,12 +70,11 @@ class Category extends Base
             }
         }
 
-        $this->response->html($this->projectLayout('category_index', array(
+        $this->response->html($this->projectLayout('category/index', array(
             'categories' => $this->category->getList($project['id'], false),
             'values' => $values,
             'errors' => $errors,
             'project' => $project,
-            'menu' => 'projects',
             'title' => t('Categories')
         )));
     }
@@ -91,11 +89,10 @@ class Category extends Base
         $project = $this->getProjectManagement();
         $category = $this->getCategory($project['id']);
 
-        $this->response->html($this->projectLayout('category_edit', array(
+        $this->response->html($this->projectLayout('category/edit', array(
             'values' => $category,
             'errors' => array(),
             'project' => $project,
-            'menu' => 'projects',
             'title' => t('Categories')
         )));
     }
@@ -123,11 +120,10 @@ class Category extends Base
             }
         }
 
-        $this->response->html($this->projectLayout('category_edit', array(
+        $this->response->html($this->projectLayout('category/edit', array(
             'values' => $values,
             'errors' => $errors,
             'project' => $project,
-            'menu' => 'projects',
             'title' => t('Categories')
         )));
     }
@@ -142,10 +138,9 @@ class Category extends Base
         $project = $this->getProjectManagement();
         $category = $this->getCategory($project['id']);
 
-        $this->response->html($this->projectLayout('category_remove', array(
+        $this->response->html($this->projectLayout('category/remove', array(
             'project' => $project,
             'category' => $category,
-            'menu' => 'projects',
             'title' => t('Remove a category')
         )));
     }

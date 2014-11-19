@@ -1,15 +1,17 @@
 <section id="main">
     <div class="page-header">
-        <h2><?= Helper\in_list($values['project_id'], $projects_list) ?> &gt; <?= t('New task') ?></h2>
+        <ul>
+            <li><i class="fa fa-table fa-fw"></i><?= Helper\a(t('Back to the board'), 'board', 'show', array('project_id' => $values['project_id'])) ?></li>
+        </ul>
     </div>
     <section id="task-section">
-    <form method="post" action="<?= Helper\u('task', 'save') ?>" autocomplete="off">
+    <form method="post" action="<?= Helper\u('task', 'save', array('project_id' => $values['project_id'])) ?>" autocomplete="off">
 
         <?= Helper\form_csrf() ?>
 
         <div class="form-column">
             <?= Helper\form_label(t('Title'), 'title') ?>
-            <?= Helper\form_text('title', $values, $errors, array('autofocus', 'required')) ?><br/>
+            <?= Helper\form_text('title', $values, $errors, array('autofocus', 'required'), 'form-input-large') ?><br/>
 
             <?= Helper\form_label(t('Description'), 'description') ?>
             <?= Helper\form_textarea('description', $values, $errors) ?><br/>

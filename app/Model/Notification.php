@@ -35,6 +35,17 @@ class Notification extends Base
      */
     public function getUsersWithNotification($project_id, array $exclude_users = array())
     {
+        if ($this->projectPermission->isEverybodyAllowed($project_id)) {
+
+            return $this->db
+                        ->table(User::TABLE)
+                        ->columns(User::TABLE.'.id', User::TABLE.'.username', User::TABLE.'.name', User::TABLE.'.email')
+                        ->eq('notifications_enabled', '1')
+                        ->neq('email', '')
+                        ->notin(User::TABLE.'.id', $exclude_users)
+                        ->findAll();
+        }
+
         return $this->db
             ->table(ProjectPermission::TABLE)
             ->columns(User::TABLE.'.id', User::TABLE.'.username', User::TABLE.'.name', User::TABLE.'.email')
@@ -106,7 +117,7 @@ class Notification extends Base
 
         foreach ($events as $event_name => $template_name) {
 
-            $listener = new NotificationListener($this->registry);
+            $listener = new NotificationListener($this->container);
             $listener->setTemplate($template_name);
 
             $this->event->attach($event_name, $listener);
@@ -124,8 +135,7 @@ class Notification extends Base
     public function sendEmails($template, array $users, array $data)
     {
         try {
-            $transport = $this->registry->shared('mailer');
-            $mailer = Swift_Mailer::newInstance($transport);
+            $mailer = Swift_Mailer::newInstance($this->container['mailer']);
 
             $message = Swift_Message::newInstance()
                             ->setSubject($this->getMailSubject($template, $data))
@@ -138,7 +148,7 @@ class Notification extends Base
             }
         }
         catch (Swift_TransportException $e) {
-            debug($e->getMessage());
+            $this->container['logger']->addError($e->getMessage());
         }
     }
 

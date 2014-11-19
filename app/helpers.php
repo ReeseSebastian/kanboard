@@ -6,11 +6,10 @@ namespace Helper;
  * Template helpers
  *
  */
-
 use Core\Security;
 use Core\Template;
-use Core\Tool;
-use Parsedown\Parsedown;
+use Core\Request;
+use Parsedown;
 
 /**
  * Append a CSRF token to a query string
@@ -79,6 +78,16 @@ function is_admin()
 }
 
 /**
+ * Return true if the user can configure the project (project are previously filtered)
+ *
+ * @return boolean
+ */
+function is_project_admin(array $project)
+{
+    return is_admin() || $project['is_private'] == 1;
+}
+
+/**
  * Return the username
  *
  * @param  array    $user   User properties (optional)
@@ -133,7 +142,7 @@ function markdown($text, array $link = array('controller' => 'task', 'action' =>
  */
 function get_current_base_url()
 {
-    $url = Tool::isHTTPS() ? 'https://' : 'http://';
+    $url = Request::isHTTPS() ? 'https://' : 'http://';
     $url .= $_SERVER['SERVER_NAME'];
     $url .= $_SERVER['SERVER_PORT'] == 80 || $_SERVER['SERVER_PORT'] == 443 ? '' : ':'.$_SERVER['SERVER_PORT'];
     $url .= dirname($_SERVER['PHP_SELF']) !== '/' ? dirname($_SERVER['PHP_SELF']).'/' : '/';
@@ -568,9 +577,9 @@ function form_numeric($name, $values = array(), array $errors = array(), array $
  * @param  string   $class       CSS class attribute
  * @return string
  */
-function a($label, $controller, $action, array $params = array(), $csrf = false, $class = '')
+function a($label, $controller, $action, array $params = array(), $csrf = false, $class = '', $title = '')
 {
-    return '<a href="'.u($controller, $action, $params, $csrf).'" class="'.$class.'">'.$label.'</a>';
+    return '<a href="'.u($controller, $action, $params, $csrf).'" class="'.$class.'" title="'.$title.'">'.$label.'</a>';
 }
 
 /**
@@ -609,8 +618,12 @@ function paginate(array $pagination)
 {
     extract($pagination);
 
-    $html = '<div id="pagination">';
-    $html .= '<span id="pagination-previous">';
+    if ($pagination['offset'] === 0 && ($total - $pagination['offset']) < $limit) {
+        return '';
+    }
+
+    $html = '<div class="pagination">';
+    $html .= '<span class="pagination-previous">';
 
     if ($pagination['offset'] > 0) {
         $offset = $pagination['offset'] - $limit;
@@ -621,7 +634,7 @@ function paginate(array $pagination)
     }
 
     $html .= '</span>';
-    $html .= '<span id="pagination-next">';
+    $html .= '<span class="pagination-next">';
 
     if (($total - $pagination['offset']) > $limit) {
         $offset = $pagination['offset'] + $limit;

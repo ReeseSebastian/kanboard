@@ -192,7 +192,7 @@ class Project extends Base
     public function getStats($project_id)
     {
         $stats = array();
-        $columns = $this->board->getcolumns($project_id);
+        $columns = $this->board->getColumns($project_id);
         $stats['nb_active_tasks'] = 0;
 
         foreach ($columns as &$column) {
@@ -512,7 +512,7 @@ class Project extends Base
             GithubWebhook::EVENT_COMMIT,
         );
 
-        $listener = new ProjectModificationDateListener($this->registry);
+        $listener = new ProjectModificationDateListener($this->container);
 
         foreach ($events as $event_name) {
             $this->event->attach($event_name, $listener);
